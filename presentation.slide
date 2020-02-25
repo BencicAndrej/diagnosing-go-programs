@@ -1,0 +1,20 @@
+Diagnosing Go Programs
+Golang Serbia Meetup
+25 Feb 2020
+Tags: golang, diagnosing, tracing, debugging, bugs
+
+Andrej Bencic
+Co-Founder & CEO, Tenderly
+andrej@tenderly.dev
+https://tenderly.dev/
+@BencicAndrej
+
+* Agenda
+
+- Introduction
+- Types of issues with can look for
+- Tooling
+- Demo
+- Takeaways
+
+: Describe the format of the talk and breakdown what topics will be covered.

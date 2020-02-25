@@ -1,0 +1,8 @@
+#!/usr/bin/osascript
+tell application "Google Chrome"
+    reload active tab of window 1
+end tell
+
+set message to "[" & (time string of (current date)) & "] Refreshing Chrome..."
+
+return message
