@@ -4,31 +4,37 @@ setup:
 	cd ~ && go get -u golang.org/x/tools/cmd/present
 	cd ~ && go get -u github.com/rakyll/hey
 
-watch:
-	./scripts/dev.sh
-
-build:
-	go build -o app
-
 docker:
 	GOOS=linux go build -o app_linux
 	docker build -t app .
 	docker run --rm -p 4000:4000 --memory 100m --memory-swap 100m --name app app
 
-docker-stop:
-	docker kill app
+cpu-load:
+	hey -cpus=1 -c 1 -z 45s http://localhost:4000/work/cpu
 
-check:
-	@if [[ -z "${TASK}" ]]; then echo "Missing TASK target"; exit 1; fi
+cpu-profile:
+	go tool pprof -nodefraction=0 http://localhost:4000/debug/pprof/profile\?seconds\=10 
 
-load: check
-	hey -cpus=1 -z 1h -q 60 http://localhost:4000/work/${TASK}
+cpu-bench:
+	go test -bench=. -benchtime=5s
 
-multiload: check
-	hey -cpus=1 -c 50 -z 1h -q 60 http://localhost:4000/work/${TASK}
+mem-load:
+	hey -cpus=1 -c 1 -z 45s http://localhost:4000/work/mem
 
-load10: check
-	hey -cpus=1 -c 1 -z 10s http://localhost:4000/work/${TASK}
+mem-profile:
+	go tool pprof -nodefraction=0 http://localhost:4000/debug/pprof/heap
 
-multiload10: check
-	hey -cpus=1 -c 50 -z 10s http://localhost:4000/work/${TASK}
+lock-load:
+	hey -cpus=1 -c 1 -z 45s http://localhost:4000/work/lock
+
+lock-load-many:
+	hey -cpus=1 -c 10 -z 45s http://localhost:4000/work/lock
+
+lock-profile:
+	go tool pprof -nodefraction=0 http://localhost:4000/debug/pprof/block
+
+mutex-profile:
+	go tool pprof -nodefraction=0 http://localhost:4000/debug/pprof/mutex
+
+panic:
+	curl http://localhost:4000/work/invalid

@@ -9,6 +9,8 @@ import (
 
 func main() {
 	runtime.GOMAXPROCS(2)
+	runtime.SetBlockProfileRate(1000)
+	runtime.SetMutexProfileFraction(1000)
 
 	worker := NewWorker()
 

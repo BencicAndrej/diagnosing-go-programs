@@ -19,8 +19,7 @@ func NewWorker() *Worker {
 
 	w.tasks["cpu"] = w.runCPU
 	w.tasks["mem"] = w.runMemory
-	w.tasks["allocmem"] = w.runCPU
-	w.tasks["log"] = w.runLog
+	w.tasks["lock"] = w.runLock
 
 	return w
 }
@@ -41,8 +40,11 @@ func (w *Worker) GetIDs() []string {
 }
 
 func (w *Worker) runCPU() error {
+	log.Print("Starting work")
+	defer log.Print("Finished work")
+
 	if rand.Int()%10 == 0 {
-		SumFirst(10000000000)
+		SumFirst(1000000000)
 	}
 
 	return nil
@@ -54,29 +56,11 @@ func (w *Worker) runMemory() error {
 	return nil
 }
 
-func (w *Worker) runAllocatedMemory() error {
-	var b []byte
-	for i := 0; i < 100; i++ {
-		b = make([]byte, 1024*1024) // 1mb
-	}
-	if b == nil {
-		panic("bytes should never be nil")
-	}
-
-	return nil
-}
-
 func (w *Worker) runLock() error {
 	w.lock.Lock()
 	defer w.lock.Unlock()
 
 	time.Sleep(10 * time.Millisecond)
 
-	return nil
-}
-func (w *Worker) runLog() error {
-	log.Print("Starting logging work")
-	SumFirstAlt(10000000000)
-	log.Print("Finished logging work")
 	return nil
 }
