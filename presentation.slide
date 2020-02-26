@@ -10,11 +10,164 @@ https://tenderly.dev/
 @BencicAndrej
 
 * Agenda
-
-- Introduction
-- Types of issues with can look for
-- Tooling
+- Why diagnose Go programs?
+- Common issues in long running programs
+- Tools and techniques
 - Demo
 - Takeaways
-
 : Describe the format of the talk and breakdown what topics will be covered.
+
+* Why diagnose Go programs?
+
+* Verify Go programs are working correctly
+Without the ability to inspect the execution of Go programs, we cannot easily tell if it is functioning correctly or not.
+
+Tools:
+
+- Metrics
+- Logs
+
+* Debug issues during development and in production
+Having a proper diagnostics setup significantly reduces the amount of time needed to resolve issues both in development and in production.
+
+Tools:
+
+- Debugger
+- Profiling
+
+* Simple issues can severely impair the performance of your programs
+
+Common mistakes can produce unnecessary load on your application, causing sudden failures and/or slowdowns.
+
+These common mistakes can be surprisingly common.
+
+Tools:
+
+- Profiling
+- Tracing
+
+* Optimize critical code paths
+Once the program is running without any hindering bugs, critical code paths can be optimized to fully utilize the speed Go offers.
+
+*Notice*: Don't go for this one first!
+
+Tools:
+
+- Profiling
+- Tracing
+
+* Common issues in long running programs
+
+* Memory leaks
+
+Even though Go has an advanced garbage collector, it is still relatively easy to start leaking memory.
+
+Consequences:
+
+- Can slowly deplete the available memory on you servers
+- Eventually crash the program
+
+Happen when:
+
+- Data streams are not closed
+- Keeping references to data you no longer need
+- Continuously calling sections of code without proper cleanup
+
+* Locking & blocking
+
+One common place where Go programs slow down is when they are waiting on some other resource.
+
+Some sources of blocking:
+
+- Waiting on filesystem I/O
+- Waiting on network I/O
+- Waiting on a channel send/receive
+- Waiting on a lock
+
+* Unexpected termination
+
+Whe taken to the extreme, previously mentioned issues can cause the entire program to terminate immediately.
+
+Why programs stop:
+
+- Panics
+- Race conditions
+- Deadlocks
+
+* Tools and techniques
+
+* Logging
+
+log.Println("test")
+
+- Most common observability technique
+- Helps with diagnosing issues on historical data
+- Easy to use, easier to over-use
+
+Tools:
+
+.link https://golang.org/pkg/log/ log
+.link https://pkg.go.dev/github.com/sirupsen/logrus Logrus
+.link https://www.elastic.co/what-is/elk-stack ELK Stack
+
+* Metrics
+
+Metrics provide a high-level overview of the health of your Go programs.
+
+- Track system and business level metrics
+- Used to alert on key metrics
+- Help detect changes in trends
+- The thing that should be used instead of excessive logging
+
+Tools:
+.link https://golang.org/pkg/expvar/ expvar
+.link https://prometheus.io/ Prometheus
+
+* Profiling
+
+Profiling helps us identify expensive or problematic sections of code
+
+- Collects and displays profiles for various sections of program execution
+- Analyze cpu, heap, goroutine, block or mutex profiles
+
+Tools:
+.link https://golang.org/pkg/runtime/pprof/ runtime/pprof
+.link https://golang.org/pkg/net/http/pprof net/http/pprof
+.link https://cloud.google.com/profiler Stackdriver Profiler
+
+* Tracing
+
+- Profiling at scale
+- Helps with complex microservice infrastructures by tying together the executions of different services to a single request ID.
+- Samples production traffic and gives an overview of request durations, with percentiles.
+
+Tools:
+
+.link https://pkg.go.dev/golang.org/x/net/trace golang.org/x/net/trace
+.link https://zipkin.io/ Zipkin
+.link https://www.jaegertracing.io/ Jaeger
+
+* Debugging
+
+Debugging gives us the ability to step through program execution and see it the same way the Go runtime does.
+
+- Inspect program state at any location in code
+- Setup breakpoints to pause the execution at exactly the right time
+- Great way to introduce yourself with a new codebase
+- Remote debugging possible but not recommended
+
+Tools:
+
+.link https://github.com/go-delve/delve Delve
+.link https://www.jetbrains.com/go/ Goland
+.link https://code.visualstudio.com/ Visual Studio Code
+
+* Demo 🤞
+
+* Takeaways
+
+- Diagnosing your programs isn't hard, you just have to know where to look
+- Metrics help you put your finger on the pulse of your Go programs
+- Profiling helps you locate sections of your code that could use some love
+- Tracing helps with finding subtle issues not visible in the context of a single request
+- Debugging is the heavy artillery of the diagnostics world

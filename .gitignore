@@ -1,2 +1,6 @@
 .idea
 .vscode
+
+app
+app_linux
+diagnosing-go-programs
